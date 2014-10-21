@@ -172,6 +172,28 @@ angularLocalStorage.provider('localStorageService', function() {
       return item;
     };
 
+    // Check if a value from local storage exists
+    // Example use: localStorageService.has('library'); // returns 'angular'
+    var existFromLocalStorage = function (key) {
+
+      if (!browserSupportsLocalStorage || self.storageType === 'cookie') {
+        if (!browserSupportsLocalStorage) {
+          $rootScope.$broadcast('LocalStorageModule.notification.warning','LOCAL_STORAGE_NOT_SUPPORTED');
+        }
+
+        return getFromCookies(key) ? true : false;
+      }
+
+      var item = webStorage ? webStorage.getItem(deriveQualifiedKey(key)) : null;
+      // angular.toJson will convert null to 'null', so a proper conversion is needed
+      // FIXME not a perfect solution, since a valid 'null' string can't be stored
+      if (!item || item === 'null') {
+        return false;
+      }
+
+      return true;
+    };
+
     // Remove an item from local storage
     // Example use: localStorageService.remove('library'); // removes the key/value pair of library='angular'
     var removeFromLocalStorage = function (key) {
@@ -401,6 +423,7 @@ angularLocalStorage.provider('localStorageService', function() {
       isSupported: browserSupportsLocalStorage,
       getStorageType: getStorageType,
       set: addToLocalStorage,
+      has: existFromLocalStorage,
       add: addToLocalStorage, //DEPRECATED
       get: getFromLocalStorage,
       keys: getKeysForLocalStorage,
