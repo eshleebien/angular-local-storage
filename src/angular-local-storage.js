@@ -174,7 +174,7 @@ angularLocalStorage.provider('localStorageService', function() {
 
     // Check if a value from local storage exists
     // Example use: localStorageService.has('library'); // returns 'angular'
-    var existFromLocalStorage = function (key) {
+    var existInLocalStorage = function (key) {
 
       if (!browserSupportsLocalStorage || self.storageType === 'cookie') {
         if (!browserSupportsLocalStorage) {
@@ -423,7 +423,7 @@ angularLocalStorage.provider('localStorageService', function() {
       isSupported: browserSupportsLocalStorage,
       getStorageType: getStorageType,
       set: addToLocalStorage,
-      has: existFromLocalStorage,
+      has: existInLocalStorage,
       add: addToLocalStorage, //DEPRECATED
       get: getFromLocalStorage,
       keys: getKeysForLocalStorage,
