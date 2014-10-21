@@ -368,15 +368,29 @@ describe('localStorageService', function() {
     });
   }));
 
-  it('should check has function', inject(function($window, localStorageService) {
+  it('should check if has function is called', inject(
+    function($window,localStorageService) {
+      spyOn(localStorageService, "has");
+      localStorageService.has("key");
+      expect(localStorageService.has).toHaveBeenCalled();
+  }))
+
+  it('should check has function', inject(
+    function(localStorageService, $rootScope) {
     //set keys
-    var key = 'key1';
-    localStorageService.set(key, {test:"test"});
-    if (localStorageService.has(key)) {
-      expect(localStorageService.get(key)).toEqual({test:"test"});
-    }
-    expect(localStorageService.has(key)).toEqual(true);
-    expect(localStorageService.has('key2')).toEqual(false);
+    var mocks = [{}, [], 'string', 90, false, null]
+      , expectation = [true, true, true, true, false, false]
+      , results = [];
+
+    spyOn($rootScope, "$broadcast").andCallFake(function(key) {
+      results.push(localStorageService.has(arguments[1].key));
+    });
+
+    mocks.forEach(function(elm, i) {
+      localStorageService.set('mock' + i, elm);
+    });
+
+    expect(results).toEqual(expectation);
   }));
 
   //sessionStorage
